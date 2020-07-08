@@ -20,15 +20,15 @@ jobs:
             username: ${{ secrets.ACR_USERNAME }}
             password: ${{ secrets.ACR_PASSWORD }}
         - run: |
-            docker build . -t ghtesting.azurecr.io/nodejssampleapp:${{ github.sha }}
-            docker push ghtesting.azurecr.io/nodejssampleapp:${{ github.sha }}
+            docker build . -t ghtesting.azurecr.io/k8sdemo:${{ github.sha }}
+            docker push ghtesting.azurecr.io/k8sdemo:${{ github.sha }}
             
         - name: 'Deploy to Azure Container Instances'
           uses: 'azure/aci-deploy@v1'
           with:
             resource-group: GitHub_Testing
             dns-name-label: url-for-container
-            image: ghtesting.azurecr.io/nodejssampleapp:${{ github.sha }}
+            image: ghtesting.azurecr.io/k8sdemo:${{ github.sha }}
             registry-username: ${{ secrets.ACR_USERNAME }}
             registry-password: ${{ secrets.ACR_PASSWORD }}
             name: ghtesting-container
