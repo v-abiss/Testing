@@ -11,9 +11,9 @@ jobs:
           
         - uses: azure/docker-login@v1
           with:
-            login-server: ghtesting.azurecr.io
+            login-server: contoso.azurecr.io
             username: ${{ secrets.ACR_USERNAME }}
             password: ${{ secrets.ACR_PASSWORD }}
         - run: |
-            docker pull ghtesting.azurecr.io/private/image:latest
+            docker pull contoso.azurecr.io/private/image:latest
             docker pull private/image:latest
