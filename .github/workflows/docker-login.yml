@@ -15,5 +15,8 @@ jobs:
             username: ${{ secrets.ACR_USERNAME }}
             password: ${{ secrets.ACR_PASSWORD }}
         - run: |
+            docker build . -t ghtesting.azurecr.io/k8sdemo:${{ github.sha }}
+            docker push ghtesting.azurecr.io/k8sdemo:${{ github.sha }}
+        - run: |
             docker pull ghtesting.azurecr.io/private/image:latest
             docker pull private/image:latest
