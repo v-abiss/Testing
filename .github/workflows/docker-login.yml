@@ -1,5 +1,5 @@
 on: [push]
-name: Linux_Container_Workflow
+name: Docker_login
 
 jobs:
     build-and-deploy:
@@ -19,4 +19,3 @@ jobs:
             docker push ghtesting.azurecr.io/k8sdemo:${{ github.sha }}
         - run: |
             docker pull ghtesting.azurecr.io/k8sdemo:${{ github.sha }}
-            docker pull k8sdemo:${{ github.sha }}
