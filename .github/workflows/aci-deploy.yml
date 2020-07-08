@@ -29,6 +29,7 @@ jobs:
             resource-group: GitHub_Testing
             dns-name-label: url-for-container
             image: ghtesting.azurecr.io/k8sdemo:${{ github.sha }}
+            registry-login-server: ghtesting.azurecr.io
             registry-username: ${{ secrets.ACR_USERNAME }}
             registry-password: ${{ secrets.ACR_PASSWORD }}
             name: ghtesting-container
