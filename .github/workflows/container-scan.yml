@@ -1,43 +1,21 @@
 on: [push]
-name: Container scanning action
 
 jobs:
-    build-and-deploy:
-        runs-on: ubuntu-latest
-        continue-on-error: true 
-        steps:
-        # checkout the repo
-        - name: 'Checkout GitHub Action'
-          uses: actions/checkout@master
-        
-        - name: 'Login via Azure CLI'
-          uses: azure/login@v1
-          with:
-            creds: ${{ secrets.AZURE_CREDENTIALS }}
-            
-        - uses: azure/docker-login@v1
-          with:
-            login-server: ghtesting.azurecr.io
-            username: ${{ secrets.ACR_USERNAME }}
-            password: ${{ secrets.ACR_PASSWORD }}
-        - run: |
-            docker build . -t ghtesting.azurecr.io/nodejssampleapp:${{ github.sha }}
-            docker push ghtesting.azurecr.io/nodejssampleapp:${{ github.sha }}
-            
-        - uses: azure/container-scan@v0
-          with:
-            image-name: ghtesting.azurecr.io/nodejssampleapp:${{ github.sha }}
-            username: ${{ secrets.ACR_USERNAME }}
-            password: ${{ secrets.ACR_PASSWORD }}
-          
-        - name: 'Deploy to Azure Container Instances'
-          uses: 'azure/aci-deploy@v1'
-          with:
-            resource-group: GitHub_Testing
-            dns-name-label: url-for-container
-            image: ghtesting.azurecr.io/nodejssampleapp:${{ github.sha }}
-            registry-login-server: ghtesting.azurecr.io
-            registry-username: ${{ secrets.ACR_USERNAME }}
-            registry-password: ${{ secrets.ACR_PASSWORD }}
-            name: ghtesting-sample
-            location: 'central us'
+  build-secure-and-push:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+
+    - run: docker build . -t ghtesting.azurecr.io/k8sdemo:${{ github.sha }}
+      
+    - uses: Azure/container-scan@v0
+      with:
+        image-name: ghtesting.azurecr.io/k8sdemo:${{ github.sha }}
+    
+    - uses: Azure/docker-login@v1
+      with:
+        login-server: ghtesting.azurecr.io
+        username: ${{ secrets.ACR_USERNAME }}
+        password: ${{ secrets.ACR_PASSWORD }}
+    
+    - run: docker push ghtesting.azurecr.io/k8sdemo:${{ github.sha }}
