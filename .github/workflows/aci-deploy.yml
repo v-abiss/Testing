@@ -1,6 +1,10 @@
 on: [push]
 name: Deploy to Azure Container Instances
 
+env:
+  ACR_LOGIN_SERVER: ghtesting.azurecr.io   # set this to your login-server's name
+  ACR_REPOSITORY_NAME: nodejssampleapp     # Name of the repository in the Container Registry 
+
 jobs:
     build-and-deploy:
         runs-on: ubuntu-latest
@@ -16,21 +20,21 @@ jobs:
             
         - uses: azure/docker-login@v1
           with:
-            login-server: ghtesting.azurecr.io
+            login-server: ${{ env.ACR_LOGIN_SERVER }}
             username: ${{ secrets.ACR_USERNAME }}
             password: ${{ secrets.ACR_PASSWORD }}
         - run: |
-            docker build . -t ghtesting.azurecr.io/nodejssampleapp:${{ github.sha }}
-            docker push ghtesting.azurecr.io/nodejssampleapp:${{ github.sha }}
+            docker build . -t ${{ env.ACR_LOGIN_SERVER }}/${{ env.ACR_REPOSITORY_NAME }}:${{ github.sha }}
+            docker push ${{ env.ACR_LOGIN_SERVER }}/${{ env.ACR_REPOSITORY_NAME }}:${{ github.sha }}
             
         - name: 'Deploy to Azure Container Instances'
           uses: 'azure/aci-deploy@v1'
           with:
             resource-group: GitHub_Testing
             dns-name-label: url-for-container
-            image: ghtesting.azurecr.io/nodejssampleapp:${{ github.sha }}
-            registry-login-server: ghtesting.azurecr.io
+            image: ${{ env.ACR_LOGIN_SERVER }}/${{ env.ACR_REPOSITORY_NAME }}:${{ github.sha }}
+            registry-login-server: ${{ env.ACR_LOGIN_SERVER }}
             registry-username: ${{ secrets.ACR_USERNAME }}
             registry-password: ${{ secrets.ACR_PASSWORD }}
-            name: ghtesting-sample
+            name: ghtesting-sample  # Provide the name of the Azure Container Instance
             location: 'central us'
