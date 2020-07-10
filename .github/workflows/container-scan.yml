@@ -4,6 +4,7 @@ name: Container scanning action
 jobs:
     build-and-deploy:
         runs-on: ubuntu-latest
+        continue-on-error: false 
         steps:
         # checkout the repo
         - name: 'Checkout GitHub Action'
