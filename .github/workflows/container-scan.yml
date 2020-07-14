@@ -1,0 +1,27 @@
+on: [push]
+name: Container scanning action
+
+env:
+  ACR_SERVER_NAME: ghtesting.azurecr.io   # set this to your login-server's name
+  ACR_REPOSITORY_NAME: k8sdemo
+  
+jobs:
+  build-secure-and-push:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+    - uses: actions/checkout@master
+
+    - run: docker build . -t ${{ env.ACR_SERVER_NAME }}/${{ env.ACR_REPOSITORY_NAME }}:${{ github.sha }}
+      
+    - uses: Azure/container-scan@v0
+      with:
+        image-name: ${{ env.ACR_SERVER_NAME }}/${{ env.ACR_REPOSITORY_NAME }}:${{ github.sha }}
+    
+    - uses: Azure/docker-login@v1
+      with:
+        login-server: ${{ env.ACR_SERVER_NAME }}
+        username: ${{ secrets.ACR_USERNAME }}
+        password: ${{ secrets.ACR_PASSWORD }}
+    
+    - run: docker push ${{ env.ACR_SERVER_NAME }}/${{ env.ACR_REPOSITORY_NAME }}:${{ github.sha }}

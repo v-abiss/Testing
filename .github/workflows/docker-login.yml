@@ -1,5 +1,5 @@
 on: [push]
-name: Linux_Container_Workflow
+name: Docker_login
 
 jobs:
     build-and-deploy:
@@ -15,5 +15,7 @@ jobs:
             username: ${{ secrets.ACR_USERNAME }}
             password: ${{ secrets.ACR_PASSWORD }}
         - run: |
-            docker pull ghtesting.azurecr.io/private/image:latest
-            docker pull private/image:latest
+            docker build . -t ghtesting.azurecr.io/k8sdemo:${{ github.sha }}
+            docker push ghtesting.azurecr.io/k8sdemo:${{ github.sha }}
+        - run: |
+            docker pull ghtesting.azurecr.io/k8sdemo:${{ github.sha }}
